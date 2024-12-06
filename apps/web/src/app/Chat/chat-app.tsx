@@ -1,24 +1,27 @@
 import React, { useState, useEffect } from 'react';
 import io from 'socket.io-client';
 import { Inputs } from './tools/type';
-import { generate, nameList } from './tools/name';
-
-const socket = io('http://localhost:3002');
+import { useLocation } from 'react-router-dom';
 
 const ChatComponents = () => {
+  const location = useLocation();
+  const FromLOgindata = location.state;
+  const myName = FromLOgindata.result.firstName;
+
+  const socket = io('http://localhost:3002');
+
   const [messages, setMessages] = useState<Inputs[]>([]);
   const [newMessage, setNewMessage] = useState('');
 
   useEffect(() => {
-    socket.on('client', (message) => {
+    socket.on('server', (message) => {
       setMessages([...messages, message]);
     });
   }, [messages]);
 
   const sendMessage = () => {
-    const firstName = generate();
     const data: Inputs = {
-      name: firstName,
+      name: myName,
       message: newMessage,
     };
     socket.emit('client', data);
@@ -27,6 +30,7 @@ const ChatComponents = () => {
 
   return (
     <div>
+      <h1>G Chat</h1>
       <div className="chat">
         {messages.map((msg, index) => (
           <div key={index}>

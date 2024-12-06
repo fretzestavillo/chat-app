@@ -13,8 +13,7 @@ export class MyGateway {
 
   // from client
   @SubscribeMessage('client')
-  //   handleEvent(@MessageBody() message: { name: string; message: string }) {
   handleMessage(client: any, message: Inputs) {
-    this.server.emit('client', message); // Broadcast message to all connected clients
+    this.server.emit('server', message); // Broadcast message to all connected clients
   }
 }
