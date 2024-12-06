@@ -3,18 +3,17 @@ import io from 'socket.io-client';
 import { Inputs } from './tools/type';
 import { useLocation } from 'react-router-dom';
 
-const ChatComponents = () => {
+const GroupChat = () => {
   const location = useLocation();
-  const FromLOgindata = location.state;
-  const myName = FromLOgindata.result.firstName;
-
+  const data = location.state;
+  const myName = data.FromLOgindata.result.firstName;
   const socket = io('http://localhost:3002');
 
   const [messages, setMessages] = useState<Inputs[]>([]);
   const [newMessage, setNewMessage] = useState('');
 
   useEffect(() => {
-    socket.on('server', (message) => {
+    socket.on('broadcastfromGC', (message) => {
       setMessages([...messages, message]);
     });
   }, [messages]);
@@ -24,13 +23,13 @@ const ChatComponents = () => {
       name: myName,
       message: newMessage,
     };
-    socket.emit('client', data);
+    socket.emit('groupChat', data);
     setNewMessage('');
   };
 
   return (
     <div>
-      <h1>G Chat</h1>
+      <h1>Group Chat: Welcome: {myName}</h1>
       <div className="chat">
         {messages.map((msg, index) => (
           <div key={index}>
@@ -50,4 +49,4 @@ const ChatComponents = () => {
   );
 };
 
-export default ChatComponents;
+export default GroupChat;

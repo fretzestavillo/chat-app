@@ -1,7 +1,8 @@
 import Login from './authentication/login';
 import SignUp from './authentication/signup';
-import ChatComponents from './Chat/chat-app';
+import GroupChat from './Chat/group.chat';
 import { BrowserRouter, Routes, Route } from 'react-router-dom';
+import { OneChat } from './Chat/one.chat';
 
 export function App() {
   return (
@@ -10,7 +11,8 @@ export function App() {
         <Routes>
           <Route path="/" element={<SignUp />} />
           <Route path="/Login" element={<Login />} />
-          <Route path="/ChatComponents" element={<ChatComponents />} />
+          <Route path="/OneChat" element={<OneChat />} />
+          <Route path="/GroupChat" element={<GroupChat />} />
         </Routes>
       </BrowserRouter>
     </>

@@ -11,9 +11,15 @@ export class MyGateway {
   @WebSocketServer()
   server: Server;
 
-  // from client
-  @SubscribeMessage('client')
-  handleMessage(client: any, message: Inputs) {
-    this.server.emit('server', message); // Broadcast message to all connected clients
+  //  GroupChat
+  @SubscribeMessage('groupChat')
+  groupMessage(client: any, message: Inputs) {
+    this.server.emit('broadcastfromGC', message); // Broadcast message to all connected clients
+  }
+
+  //  1v1
+  @SubscribeMessage('oneVone')
+  oneToOneMessage(client: any, message: Inputs) {
+    this.server.emit('broadcastfromoneVone', message); // Broadcast message to all connected clients
   }
 }
