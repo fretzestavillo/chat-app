@@ -1,37 +1,20 @@
 import {
-  MessageBody,
-  OnGatewayConnection,
-  OnGatewayDisconnect,
   SubscribeMessage,
   WebSocketGateway,
   WebSocketServer,
 } from '@nestjs/websockets';
+import { Server } from 'socket.io';
+import { Inputs } from '../tools/type';
 
-import { Socket, Server } from 'socket.io';
-@WebSocketGateway(3002)
-export class MyGateway implements OnGatewayConnection, OnGatewayDisconnect {
-  @WebSocketServer() server: Server;
-
-  handleConnection(client: Socket) {
-    console.log('New user connected..', client.id);
-  }
-
-  handleDisconnect(client: Socket) {
-    console.log('User Disconnected..', client.id);
-  }
+@WebSocketGateway(3002, { cors: { origin: '*' } })
+export class MyGateway {
+  @WebSocketServer()
+  server: Server;
 
   // from client
   @SubscribeMessage('client')
-  onNewMessage(client: Socket, message: any) {
-    console.log(message);
-
-    // for you
-    client.emit('server', 'I am from server this is only for you');
-
-    // for all
-    this.server.emit(
-      'server',
-      'I server am broadcasting and this is for alllllllll....'
-    );
+  //   handleEvent(@MessageBody() message: { name: string; message: string }) {
+  handleMessage(client: any, message: Inputs) {
+    this.server.emit('client', message); // Broadcast message to all connected clients
   }
 }
