@@ -3,6 +3,7 @@ import { SignUpInput } from './tools/signup.input';
 import { Repository } from 'typeorm';
 import { InjectRepository } from '@nestjs/typeorm';
 import { UserEntity } from './tools/user.entity';
+import Redis from 'ioredis';
 
 @Injectable()
 export class ChatService {
@@ -11,8 +12,6 @@ export class ChatService {
   ) {}
 
   async postDataSignUp(signUpInput: SignUpInput): Promise<UserEntity> {
-    console.log('service');
-
     const chatEntity = new UserEntity();
     chatEntity.firstName = signUpInput.firstName;
     chatEntity.lastName = signUpInput.lastName;

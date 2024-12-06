@@ -19,6 +19,7 @@ export function OneChat() {
   }, [messages]);
 
   const sendMessage = () => {
+    !newMessage ? alert('Please put message') : 'fff';
     const data: Inputs = {
       name: myName,
       message: newMessage,
