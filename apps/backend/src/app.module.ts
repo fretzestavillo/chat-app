@@ -1,7 +1,7 @@
 import { Module } from '@nestjs/common';
 import { ChatModule } from './app/chatmodule';
-import { ChatEntity } from './app/tools/chat.entity';
 import { TypeOrmModule } from '@nestjs/typeorm';
+import { UserEntity } from './app/tools/user.entity';
 
 @Module({
   imports: [
@@ -12,7 +12,7 @@ import { TypeOrmModule } from '@nestjs/typeorm';
       username: 'file',
       password: 'file',
       database: 'file',
-      entities: [ChatEntity],
+      entities: [UserEntity],
       synchronize: true,
     }),
     ChatModule,
