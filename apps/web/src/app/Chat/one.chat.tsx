@@ -13,21 +13,25 @@ export function OneChat() {
   const socket = useContext(WebsocketContext);
 
   useEffect(() => {
+    getList();
+  }, []);
+  const getList = async (): Promise<void> => {
+    const BaseUrl = 'http://localhost:3000/api/';
+    const response = await fetch(`${BaseUrl}chat`);
+    const result = await response.json();
+    setMessages(result);
+  };
+
+  useEffect(() => {
     socket.on('messageToClient', (newMessage: MessageList) => {
       console.log(newMessage, 'dddddddddddddddd');
       setMessages((prev) => [...prev, newMessage]);
     });
-    socket.on('getAlldata', (allData) => {
-      allData.map((data: MessageList) => {
-        console.log(data, 'wwwwwwwwwwwwwww');
-        setMessages((prev) => [...prev, data]);
-      });
-    });
+
     return () => {
       console.log('Unregistering Events...');
       socket.off('messageToServer');
       socket.off('messageToClient');
-      socket.off('getAlldata');
     };
   }, []);
 

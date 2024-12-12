@@ -13,7 +13,6 @@ import { Server, Socket } from 'socket.io';
 import { Inputs, MessageList } from '../tools/type';
 import { Inject, Logger } from '@nestjs/common';
 import { ChatService } from '../chat.service';
-import { ChatEntity } from '../tools/chat.entity';
 
 @WebSocketGateway(3002, { cors: { origin: '*' } })
 export class MyGateway
@@ -34,8 +33,6 @@ export class MyGateway
   async handleConnection(client: Socket, ...args: any[]): Promise<void> {
     this.count += 1;
     this.logger.log(`Connected: ${this.count} connection}`);
-    const messages: ChatEntity[] = await this.chatService.getAllMessages();
-    client.emit('getAlldata', messages);
   }
 
   async handleDisconnect(client: Socket) {
