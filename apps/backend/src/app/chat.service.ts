@@ -3,12 +3,16 @@ import { SignUpInput } from './tools/signup.input';
 import { Repository } from 'typeorm';
 import { InjectRepository } from '@nestjs/typeorm';
 import { UserEntity } from './tools/user.entity';
-import Redis from 'ioredis';
+import { ChatEntity } from './tools/chat.entity';
+import { CreateMessage } from './tools/type';
 
 @Injectable()
 export class ChatService {
   constructor(
-    @InjectRepository(UserEntity) private userEntity: Repository<UserEntity>
+    @InjectRepository(UserEntity)
+    private userEntity: Repository<UserEntity>,
+    @InjectRepository(ChatEntity)
+    private chatEntity: Repository<ChatEntity>
   ) {}
 
   async postDataSignUp(signUpInput: SignUpInput): Promise<UserEntity> {
@@ -27,5 +31,18 @@ export class ChatService {
     });
 
     return !found ? 'false' : found;
+  }
+
+  async createMessage(data: CreateMessage) {
+    const messageEntity = new ChatEntity();
+    messageEntity.sender = data.sender;
+    messageEntity.message = data.message;
+
+    await this.chatEntity.save(messageEntity);
+    return messageEntity;
+  }
+
+  async getAllMessages(): Promise<ChatEntity[]> {
+    return this.chatEntity.find();
   }
 }

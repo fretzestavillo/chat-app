@@ -1,5 +1,9 @@
-import { Entity, PrimaryGeneratedColumn, Column, OneToMany } from 'typeorm';
-import { MessageEntity } from './message.entity';
+import {
+  Entity,
+  PrimaryGeneratedColumn,
+  Column,
+  CreateDateColumn,
+} from 'typeorm';
 
 @Entity()
 export class ChatEntity {
@@ -7,11 +11,11 @@ export class ChatEntity {
   id: string;
 
   @Column()
-  name: string;
+  sender: string;
 
-  @Column({ default: false })
-  isGroup: boolean;
+  @Column()
+  message: string;
 
-  @OneToMany(() => MessageEntity, (message) => message.chat)
-  messages: MessageEntity[];
+  @CreateDateColumn()
+  created_at: Date;
 }
