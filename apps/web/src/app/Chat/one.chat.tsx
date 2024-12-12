@@ -50,28 +50,6 @@ export function OneChat() {
       <div>
         <div>
           <h1>Welcome {myName} </h1>
-          {/* <div>
-            {messages.length === 0 ? (
-              <div>No Messages</div>
-            ) : (
-              <div>
-                {messages.map((msg, index) => (
-                  <div key={index}>
-                    <p>
-                      {msg.sender}: {msg.message}: &nbsp;{' '}
-                      {new Date(msg.created_at).toLocaleString(undefined, {
-                        // year: 'numeric',
-                        // month: 'long',
-                        // day: 'numeric',
-                        hour: 'numeric',
-                        minute: 'numeric',
-                      })}
-                    </p>
-                  </div>
-                ))}
-              </div>
-            )}
-          </div> */}
           <div>
             <div>
               {messages.map((msg, index) => (
