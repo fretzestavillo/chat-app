@@ -40,7 +40,7 @@ export class MyGateway
   }
 
   @SubscribeMessage('messageToServer')
-  async oneToOneMessage(client: Socket, data: Inputs) {
+  async GroupChat(client: Socket, data: Inputs) {
     const createdmessages = await this.chatService.createMessage(data);
     this.server.emit('messageToClient', createdmessages);
   }
@@ -53,7 +53,7 @@ export class MyGateway
   }
 
   @SubscribeMessage('register_user')
-  registerUser(client: Socket, username: string) {
+  registerOnlineUser(client: Socket, username: string) {
     this.userSockets.set(username, client.id);
     console.log(`User ${username} registered with socket ID ${client.id}`);
   }

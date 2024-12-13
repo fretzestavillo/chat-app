@@ -9,7 +9,7 @@ export function OneChat() {
   const myName = FromLOgindata.result.firstName;
   const [onlineUser, setOnlineUser] = useState<string[]>([]);
   const socket = useContext(WebsocketContext);
-  const [receivedSender, setReceivedFromSender] = useState('Hellllllooooooooo');
+  const [receivedSender, setReceivedFromSender] = useState('for private chat');
   const finalData = Array.from(new Set(onlineUser.map((item: any) => item)));
   console.log(FromLOgindata);
 
@@ -27,7 +27,7 @@ export function OneChat() {
   function userOnline(name: any) {
     const fromUser = myName;
     const username = name;
-    const message = 'bitch';
+    const message = '150 sent';
 
     socket.emit('private_chat', {
       from: fromUser,
@@ -48,7 +48,7 @@ export function OneChat() {
       <h1>{receivedSender}</h1>
       <div>
         <div>
-          <h1>Welcome {myName} </h1>
+          <h1>Welcome to main chat {myName} </h1>
           {finalData.map((data, index) => (
             <div key={index}>
               <button onClick={() => userOnline(data)}>

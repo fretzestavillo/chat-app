@@ -20,6 +20,7 @@ export function GroupChat() {
     const response = await fetch(`${BaseUrl}chat`);
     const result = await response.json();
     setMessages(result);
+    socket.emit('getOnlineUser', myName);
   };
 
   useEffect(() => {
@@ -49,7 +50,7 @@ export function GroupChat() {
     <>
       <div>
         <div>
-          <h1>Welcome {myName} </h1>
+          <h1>Welcome to the Group Chat {myName} </h1>
 
           <div>
             <div>
