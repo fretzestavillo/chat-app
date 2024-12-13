@@ -12,6 +12,7 @@ export function OneChat() {
   const [newMessage, setNewMessage] = useState('');
   const [onlineUser, setOnlineUser] = useState<string[]>([]);
   const socket = useContext(WebsocketContext);
+  const [receivedSender, setReceivedFromSender] = useState('Hellllllooooooooo');
   const finalData = Array.from(new Set(onlineUser.map((item: any) => item)));
 
   useEffect(() => {
@@ -62,14 +63,14 @@ export function OneChat() {
       to: username,
       message: message,
     });
-
-    socket.on('private_message', (data) => {
-      const { sender, message } = data;
-      alert(message);
-    });
   }
+  socket.on('private_message', (data) => {
+    const message = data.message;
+    setReceivedFromSender(message);
+  });
   return (
     <>
+      <h1>{receivedSender}</h1>
       <div>
         <div>
           <h1>Welcome {myName} </h1>
