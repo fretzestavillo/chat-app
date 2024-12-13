@@ -22,6 +22,7 @@ export class MyGateway
   private chatService: ChatService;
   private logger: Logger = new Logger('MyGateway');
   private count: number = 0;
+  private storeUser: string[] = [];
 
   @WebSocketServer()
   private server: Server;
@@ -44,5 +45,12 @@ export class MyGateway
   async oneToOneMessage(client: Socket, data: Inputs) {
     const createdmessages = await this.chatService.createMessage(data);
     this.server.emit('messageToClient', createdmessages);
+  }
+
+  @SubscribeMessage('getOnlineUser')
+  getOnlineUser(client: Socket, data: any) {
+    this.storeUser.push(data);
+    const finalData = this.storeUser;
+    this.server.emit('getOnlineUserfromserver', finalData);
   }
 }

@@ -10,7 +10,9 @@ export function OneChat() {
   const myName = FromLOgindata.result.firstName;
   const [messages, setMessages] = useState<MessageList[]>([]);
   const [newMessage, setNewMessage] = useState('');
+  const [onlineUser, setOnlineUser] = useState<string[]>([]);
   const socket = useContext(WebsocketContext);
+  const finalData = Array.from(new Set(onlineUser.map((item: any) => item)));
 
   useEffect(() => {
     getList();
@@ -20,11 +22,15 @@ export function OneChat() {
     const response = await fetch(`${BaseUrl}chat`);
     const result = await response.json();
     setMessages(result);
+
+    socket.emit('getOnlineUser', myName);
+    socket.on('getOnlineUserfromserver', (newMessage: string[]) => {
+      setOnlineUser(newMessage);
+    });
   };
 
   useEffect(() => {
     socket.on('messageToClient', (newMessage: MessageList) => {
-      console.log(newMessage, 'dddddddddddddddd');
       setMessages((prev) => [...prev, newMessage]);
     });
 
@@ -50,6 +56,11 @@ export function OneChat() {
       <div>
         <div>
           <h1>Welcome {myName} </h1>
+          {finalData.map((data, index) => (
+            <div key={index}>
+              <p>{data}: is online</p>
+            </div>
+          ))}
           <div>
             <div>
               {messages.map((msg, index) => (
