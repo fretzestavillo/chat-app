@@ -24,6 +24,8 @@ export class MyGateway
   private count: number = 0;
   private storeUser: string[] = [];
 
+  private userSockets: Map<string, string> = new Map();
+
   @WebSocketServer()
   private server: Server;
 
@@ -52,5 +54,31 @@ export class MyGateway
     this.storeUser.push(data);
     const finalData = this.storeUser;
     this.server.emit('getOnlineUserfromserver', finalData);
+  }
+
+  @SubscribeMessage('register_user')
+  registerUser(client: Socket, username: string) {
+    this.userSockets.set(username, client.id);
+    console.log(`User ${username} registered with socket ID ${client.id}`);
+  }
+
+  @SubscribeMessage('private_chat')
+  privateMessages(client: Socket, data: any) {
+    const sender = data.from;
+    const recipient = data.to;
+    const message = data.message;
+
+    console.log(`Message from ${sender} to ${recipient}: ${message}`);
+
+    const recipientSocketId = this.userSockets.get(recipient);
+
+    if (recipientSocketId) {
+      this.server.to(recipientSocketId).emit('private_message', {
+        sender,
+        message,
+      });
+    } else {
+      console.log(`User ${recipient} is not connected.`);
+    }
   }
 }

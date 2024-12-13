@@ -24,6 +24,7 @@ export function OneChat() {
     setMessages(result);
 
     socket.emit('getOnlineUser', myName);
+    socket.emit('register_user', myName); // `fromUser` is the username of the current client
     socket.on('getOnlineUserfromserver', (newMessage: string[]) => {
       setOnlineUser(newMessage);
     });
@@ -51,6 +52,22 @@ export function OneChat() {
     setNewMessage('');
   };
 
+  function userOnline(name: any) {
+    const fromUser = myName;
+    const username = name;
+    const message = 'bitch';
+
+    socket.emit('private_chat', {
+      from: fromUser,
+      to: username,
+      message: message,
+    });
+
+    socket.on('private_message', (data) => {
+      const { sender, message } = data;
+      alert(message);
+    });
+  }
   return (
     <>
       <div>
@@ -58,7 +75,9 @@ export function OneChat() {
           <h1>Welcome {myName} </h1>
           {finalData.map((data, index) => (
             <div key={index}>
-              <p>{data}: is online</p>
+              <button onClick={() => userOnline(data)}>
+                {data}: is online
+              </button>
             </div>
           ))}
           <div>
