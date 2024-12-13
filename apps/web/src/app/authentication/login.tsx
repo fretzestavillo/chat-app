@@ -31,8 +31,6 @@ export default function Login() {
     finalResult === 'false'
       ? alert('fck you should signup')
       : navigate('/OneChat', { state: { result } });
-
-    // await getList();
   };
 
   return (

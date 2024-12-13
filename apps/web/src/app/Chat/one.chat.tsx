@@ -1,5 +1,4 @@
 import { useLocation, useNavigate } from 'react-router-dom';
-import { Inputs, MessageList } from './tools/type';
 import { useContext, useEffect, useState } from 'react';
 import { WebsocketContext } from './socket';
 
@@ -8,49 +7,21 @@ export function OneChat() {
   const location = useLocation();
   const FromLOgindata = location.state;
   const myName = FromLOgindata.result.firstName;
-  const [messages, setMessages] = useState<MessageList[]>([]);
-  const [newMessage, setNewMessage] = useState('');
   const [onlineUser, setOnlineUser] = useState<string[]>([]);
   const socket = useContext(WebsocketContext);
   const [receivedSender, setReceivedFromSender] = useState('Hellllllooooooooo');
   const finalData = Array.from(new Set(onlineUser.map((item: any) => item)));
+  console.log(FromLOgindata);
 
   useEffect(() => {
     getList();
   }, []);
   const getList = async (): Promise<void> => {
-    const BaseUrl = 'http://localhost:3000/api/';
-    const response = await fetch(`${BaseUrl}chat`);
-    const result = await response.json();
-    setMessages(result);
-
     socket.emit('getOnlineUser', myName);
     socket.emit('register_user', myName); // `fromUser` is the username of the current client
     socket.on('getOnlineUserfromserver', (newMessage: string[]) => {
       setOnlineUser(newMessage);
     });
-  };
-
-  useEffect(() => {
-    socket.on('messageToClient', (newMessage: MessageList) => {
-      setMessages((prev) => [...prev, newMessage]);
-    });
-
-    return () => {
-      console.log('Unregistering Events...');
-      socket.off('messageToServer');
-      socket.off('messageToClient');
-    };
-  }, []);
-
-  const onSubmit = () => {
-    !newMessage ? alert('Please put message') : 'fff';
-    const data: Inputs = {
-      sender: myName,
-      message: newMessage,
-    };
-    socket.emit('messageToServer', data);
-    setNewMessage('');
   };
 
   function userOnline(name: any) {
@@ -68,6 +39,10 @@ export function OneChat() {
     const message = data.message;
     setReceivedFromSender(message);
   });
+
+  function groupChatButton() {
+    navigate('/GroupChat', { state: { FromLOgindata } });
+  }
   return (
     <>
       <h1>{receivedSender}</h1>
@@ -81,32 +56,8 @@ export function OneChat() {
               </button>
             </div>
           ))}
-          <div>
-            <div>
-              {messages.map((msg, index) => (
-                <div key={index}>
-                  <p>
-                    {msg.sender}: {msg.message}: &nbsp;{' '}
-                    {new Date(msg.created_at).toLocaleString(undefined, {
-                      // year: 'numeric',
-                      // month: 'long',
-                      // day: 'numeric',
-                      hour: 'numeric',
-                      minute: 'numeric',
-                    })}
-                  </p>
-                </div>
-              ))}
-            </div>
-          </div>
-          <div>
-            <input
-              type="text"
-              value={newMessage}
-              onChange={(e) => setNewMessage(e.target.value)}
-            />
-            <button onClick={onSubmit}>Submit</button>
-          </div>
+          <br />
+          <button onClick={groupChatButton}>Group Chat</button>
         </div>
       </div>
     </>

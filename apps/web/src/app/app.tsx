@@ -1,8 +1,8 @@
 import Login from './authentication/login';
 import SignUp from './authentication/signup';
-import GroupChat from './Chat/group.chat';
 import { BrowserRouter, Routes, Route } from 'react-router-dom';
 import { OneChat } from './Chat/one.chat';
+import { GroupChat } from './Chat/group.chat';
 
 export function App() {
   return (

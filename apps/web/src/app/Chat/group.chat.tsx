@@ -1,52 +1,84 @@
-import React, { useState, useEffect } from 'react';
-import io from 'socket.io-client';
-import { Inputs } from './tools/type';
-import { useLocation } from 'react-router-dom';
+import { useLocation, useNavigate } from 'react-router-dom';
+import { Inputs, MessageList } from './tools/type';
+import { useContext, useEffect, useState } from 'react';
+import { WebsocketContext } from './socket';
 
-const GroupChat = () => {
+export function GroupChat() {
+  const navigate = useNavigate();
   const location = useLocation();
-  const data = location.state;
-  const myName = data.FromLOgindata.result.firstName;
-  const socket = io('http://localhost:3002');
-
-  const [messages, setMessages] = useState<Inputs[]>([]);
+  const FromLOgindata = location.state;
+  const myName = FromLOgindata.FromLOgindata.result.firstName;
+  const [messages, setMessages] = useState<MessageList[]>([]);
   const [newMessage, setNewMessage] = useState('');
+  const socket = useContext(WebsocketContext);
 
   useEffect(() => {
-    socket.on('broadcastfromGC', (message) => {
-      setMessages([...messages, message]);
-    });
-  }, [messages]);
+    getList();
+  }, []);
+  const getList = async (): Promise<void> => {
+    const BaseUrl = 'http://localhost:3000/api/';
+    const response = await fetch(`${BaseUrl}chat`);
+    const result = await response.json();
+    setMessages(result);
+  };
 
-  const sendMessage = () => {
+  useEffect(() => {
+    socket.on('messageToClient', (newMessage: MessageList) => {
+      setMessages((prev) => [...prev, newMessage]);
+    });
+
+    return () => {
+      console.log('Unregistering Events...');
+      socket.off('messageToServer');
+      socket.off('messageToClient');
+    };
+  }, []);
+
+  const onSubmit = () => {
+    !newMessage ? alert('Please put message') : 'fff';
     const data: Inputs = {
-      name: myName,
+      sender: myName,
+
       message: newMessage,
     };
-    socket.emit('groupChat', data);
+    socket.emit('messageToServer', data);
     setNewMessage('');
   };
 
   return (
-    <div>
-      <h1>Group Chat: Welcome: {myName}</h1>
-      <div className="chat">
-        {messages.map((msg, index) => (
-          <div key={index}>
-            {msg.name}: {msg.message}
-          </div>
-        ))}
-      </div>
-      <div className="input">
-        <input
-          type="text"
-          value={newMessage}
-          onChange={(e) => setNewMessage(e.target.value)}
-        />
-        <button onClick={sendMessage}>Send</button>
-      </div>
-    </div>
-  );
-};
+    <>
+      <div>
+        <div>
+          <h1>Welcome {myName} </h1>
 
-export default GroupChat;
+          <div>
+            <div>
+              {messages.map((msg, index) => (
+                <div key={index}>
+                  <p>
+                    {msg.sender}: {msg.message}: &nbsp;{' '}
+                    {new Date(msg.created_at).toLocaleString(undefined, {
+                      // year: 'numeric',
+                      // month: 'long',
+                      // day: 'numeric',
+                      hour: 'numeric',
+                      minute: 'numeric',
+                    })}
+                  </p>
+                </div>
+              ))}
+            </div>
+          </div>
+          <div>
+            <input
+              type="text"
+              value={newMessage}
+              onChange={(e) => setNewMessage(e.target.value)}
+            />
+            <button onClick={onSubmit}>Submit</button>
+          </div>
+        </div>
+      </div>
+    </>
+  );
+}
