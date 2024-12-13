@@ -1,6 +1,4 @@
 import {
-  ConnectedSocket,
-  MessageBody,
   OnGatewayConnection,
   OnGatewayDisconnect,
   OnGatewayInit,
@@ -9,8 +7,7 @@ import {
   WebSocketServer,
 } from '@nestjs/websockets';
 import { Server, Socket } from 'socket.io';
-
-import { Inputs, MessageList } from '../tools/type';
+import { Inputs } from '../tools/type';
 import { Inject, Logger } from '@nestjs/common';
 import { ChatService } from '../chat.service';
 
@@ -23,7 +20,6 @@ export class MyGateway
   private logger: Logger = new Logger('MyGateway');
   private count: number = 0;
   private storeUser: string[] = [];
-
   private userSockets: Map<string, string> = new Map();
 
   @WebSocketServer()
@@ -67,11 +63,8 @@ export class MyGateway
     const sender = data.from;
     const recipient = data.to;
     const message = data.message;
-
     console.log(`Message from ${sender} to ${recipient}: ${message}`);
-
     const recipientSocketId = this.userSockets.get(recipient);
-
     if (recipientSocketId) {
       this.server.to(recipientSocketId).emit('private_message', {
         sender,
