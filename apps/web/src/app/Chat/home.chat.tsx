@@ -2,16 +2,14 @@ import { useLocation, useNavigate } from 'react-router-dom';
 import { useContext, useEffect, useState } from 'react';
 import { WebsocketContext } from './socket';
 
-export function OneChat() {
+export function Home() {
   const navigate = useNavigate();
   const location = useLocation();
   const FromLOgindata = location.state;
   const myName = FromLOgindata.result.firstName;
   const [onlineUser, setOnlineUser] = useState<string[]>([]);
   const socket = useContext(WebsocketContext);
-  const [receivedSender, setReceivedFromSender] = useState('for private chat');
   const finalData = Array.from(new Set(onlineUser.map((item: any) => item)));
-  console.log(FromLOgindata);
 
   useEffect(() => {
     getList();
@@ -25,27 +23,14 @@ export function OneChat() {
   };
 
   function userOnline(name: any) {
-    const fromUser = myName;
-    const username = name;
-    const message = '150 sent';
-
-    socket.emit('private_chat', {
-      from: fromUser,
-      to: username,
-      message: message,
-    });
+    navigate('/PrivateChat', { state: { FromLOgindata, name } });
   }
-  socket.on('private_message', (data) => {
-    const message = data.message;
-    setReceivedFromSender(message);
-  });
 
-  function groupChatButton() {
+  function oneChatButton() {
     navigate('/GroupChat', { state: { FromLOgindata } });
   }
   return (
     <>
-      <h1>{receivedSender}</h1>
       <div>
         <div>
           <h1>Welcome to main chat {myName} </h1>
@@ -57,7 +42,7 @@ export function OneChat() {
             </div>
           ))}
           <br />
-          <button onClick={groupChatButton}>Group Chat</button>
+          <button onClick={oneChatButton}>Group Chat</button>
         </div>
       </div>
     </>

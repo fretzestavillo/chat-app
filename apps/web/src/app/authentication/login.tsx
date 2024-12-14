@@ -30,7 +30,7 @@ export default function Login() {
     const finalResult = String(result);
     finalResult === 'false'
       ? alert('fck you should signup')
-      : navigate('/OneChat', { state: { result } });
+      : navigate('/Home', { state: { result } });
   };
 
   return (

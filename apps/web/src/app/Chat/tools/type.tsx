@@ -14,3 +14,7 @@ export type MessageList = {
   message: string;
   created_at: Date;
 };
+
+export type ChatList = {
+  message: string;
+};
