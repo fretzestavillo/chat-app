@@ -8,13 +8,14 @@ import { ChatEntity } from './app/tools/chat.entity';
   imports: [
     TypeOrmModule.forRoot({
       type: 'postgres',
-      host: '172.19.16.1',
+      host: 'host.docker.internal',  // Updated host for WSL2
       port: 5432,
       username: 'file',
       password: 'file',
       database: 'file',
       entities: [UserEntity, ChatEntity],
       synchronize: true,
+
     }),
 
     ChatModule,
