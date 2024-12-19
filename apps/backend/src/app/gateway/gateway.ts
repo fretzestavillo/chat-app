@@ -7,9 +7,10 @@ import {
   WebSocketServer,
 } from '@nestjs/websockets';
 import { Server, Socket } from 'socket.io';
-import { Inputs } from '../tools/type';
+import { CreatePrivateMessage, Inputs } from '../tools/type';
 import { Inject, Logger } from '@nestjs/common';
 import { ChatService } from '../chat.service';
+import { PrivateEntity } from '../tools/private.entity';
 
 @WebSocketGateway(3002, { cors: { origin: '*' } })
 export class MyGateway
@@ -17,8 +18,9 @@ export class MyGateway
 {
   @Inject()
   private chatService: ChatService;
+  private privateEntity: PrivateEntity
   private logger: Logger = new Logger('MyGateway');
-  private count: number = 0;
+  private count = 0;
   private storeUser: string[] = [];
   private userSockets: Map<string, string> = new Map();
 
@@ -39,40 +41,36 @@ export class MyGateway
     this.logger.log(`Disconnected: ${this.count} connections`);
   }
 
-  @SubscribeMessage('messageToServer')
-  async GroupChat(client: Socket, data: Inputs) {
-    const createdmessages = await this.chatService.createMessage(data);
-    this.server.emit('messageToClient', createdmessages);
-  }
-
+  
   @SubscribeMessage('getOnlineUser')
   getOnlineUser(client: Socket, data: any) {
     this.storeUser.push(data);
     const finalData = this.storeUser;
     this.server.emit('getOnlineUserfromserver', finalData);
   }
-
+  
   @SubscribeMessage('register_user')
   registerOnlineUser(client: Socket, username: string) {
     this.userSockets.set(username, client.id);
     console.log(`User ${username} registered with socket ID ${client.id}`);
   }
+  @SubscribeMessage('messageToServer')
+  async GroupChat(client: Socket, data: Inputs) {
+    const createdmessages = await this.chatService.createMessage(data);
+    this.server.emit('messageToClient', createdmessages);
+  }
 
   @SubscribeMessage('private_chat')
-  privateMessages(client: Socket, data: any) {
-    const sender = data.from;
-    const recipient = data.to;
-    const message = data.message;
-    const recipientSocketId = this.userSockets.get(recipient);
+ async privateMessages(client: Socket, data: CreatePrivateMessage) {
+
+    const privateMessages = await this.chatService.createPrivateMessage(data);
+
+    const recipientSocketId = this.userSockets.get(privateMessages.recipient);
     if (recipientSocketId) {
-      this.server.to(recipientSocketId).emit('private_message', message);
-      console.log(`Message from ${sender} to ${recipient}: ${message}`);
-      //   this.server.to(recipientSocketId).emit('private_message', {
-      //     sender,
-      //     message,
-      //   });
+      this.server.to(recipientSocketId).emit('private_message', privateMessages);
+      console.log(`Message from ${privateMessages.sender} to ${privateMessages.recipient}: ${privateMessages.messageContent}`);
     } else {
-      console.log(`User ${recipient} is not connected.`);
+      console.log(`User ${privateMessages.recipient} is not connected.`);
     }
   }
 }

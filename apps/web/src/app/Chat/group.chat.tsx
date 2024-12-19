@@ -36,7 +36,7 @@ export function GroupChat() {
   }, []);
 
   const onSubmit = () => {
-    !newMessage ? alert('Please put message') : 'fff';
+    !newMessage ? alert('Please put message'): console.log('good boy')
     const data: Inputs = {
       sender: myName,
 
@@ -48,8 +48,7 @@ export function GroupChat() {
 
   return (
     <>
-      <div>
-        <div>
+      
           <h1>Welcome to the Group Chat {myName} </h1>
 
           <div>
@@ -78,8 +77,7 @@ export function GroupChat() {
             />
             <button onClick={onSubmit}>Submit</button>
           </div>
-        </div>
-      </div>
-    </>
+          
+          </>
   );
 }

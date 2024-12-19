@@ -1,8 +1,10 @@
-import { Body, Controller, Get, Post } from '@nestjs/common';
+import { Body, Controller, Get, Post, Query } from '@nestjs/common';
 import { ChatService } from './chat.service';
 import { SignUpInput } from './tools/signup.input';
 import { UserEntity } from './tools/user.entity';
 import { ChatEntity } from './tools/chat.entity';
+import { PrivateEntity } from './tools/private.entity';
+import { PrivatePeople } from './tools/type';
 
 @Controller()
 export class ChatController {
@@ -21,5 +23,16 @@ export class ChatController {
   @Get('chat')
   getData(): Promise<ChatEntity[]> {
     return this.chatService.getAllMessages();
+  }
+
+  @Get('privatechat')
+  getPrivateMessages(@Query('sender') sender: string,
+  @Query('recipient') recipient: string)
+  
+  : Promise<PrivateEntity[]> {
+    console.log('here at controller')
+    console.log(sender)
+    console.log(recipient)
+    return this.chatService.getPrivateMessages(sender, recipient);
   }
 }

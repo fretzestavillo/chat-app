@@ -14,3 +14,16 @@ export type MessageList = {
   message: string;
   created_at: Date;
 };
+
+export type CreatePrivateMessage = {
+
+  sender: string;
+  recipient: string;
+  messageContent: string;
+}
+
+
+export type PrivatePeople = {
+  sender: string,
+  recipient: string
+}

@@ -18,3 +18,13 @@ export type MessageList = {
 export type ChatList = {
   message: string;
 };
+
+
+export type PrivateContent = {
+    id: string;
+    sender: string;
+    recipient: string;
+    messageContent: string;
+    created_at: Date;
+  }
+  

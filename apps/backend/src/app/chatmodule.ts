@@ -5,9 +5,10 @@ import { GatewayModule } from './gateway/gateway.module';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { UserEntity } from './tools/user.entity';
 import { ChatEntity } from './tools/chat.entity';
+import { PrivateEntity } from './tools/private.entity';
 
 @Module({
-  imports: [TypeOrmModule.forFeature([UserEntity, ChatEntity]), GatewayModule],
+  imports: [TypeOrmModule.forFeature([UserEntity, ChatEntity, PrivateEntity]), GatewayModule],
   controllers: [ChatController],
   providers: [ChatService],
 })

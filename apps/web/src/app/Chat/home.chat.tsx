@@ -22,8 +22,8 @@ export function Home() {
     });
   };
 
-  function userOnline(name: any) {
-    navigate('/PrivateChat', { state: { FromLOgindata, name } });
+  function userOnline(recipient: any) {
+    navigate('/PrivateChat', { state: { FromLOgindata, recipient } });
   }
 
   function oneChatButton() {

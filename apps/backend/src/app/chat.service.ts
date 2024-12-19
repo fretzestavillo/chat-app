@@ -4,7 +4,8 @@ import { Repository } from 'typeorm';
 import { InjectRepository } from '@nestjs/typeorm';
 import { UserEntity } from './tools/user.entity';
 import { ChatEntity } from './tools/chat.entity';
-import { CreateMessage } from './tools/type';
+import { CreateMessage, CreatePrivateMessage, PrivatePeople } from './tools/type';
+import { PrivateEntity } from './tools/private.entity';
 
 @Injectable()
 export class ChatService {
@@ -12,7 +13,10 @@ export class ChatService {
     @InjectRepository(UserEntity)
     private userEntity: Repository<UserEntity>,
     @InjectRepository(ChatEntity)
-    private chatEntity: Repository<ChatEntity>
+    private chatEntity: Repository<ChatEntity>,
+
+    @InjectRepository(PrivateEntity)
+    private privateEntity: Repository<PrivateEntity>
   ) {}
 
   async postDataSignUp(signUpInput: SignUpInput): Promise<UserEntity> {
@@ -33,6 +37,32 @@ export class ChatService {
     return !found ? 'false' : found;
   }
 
+  
+  async getAllMessages(): Promise<ChatEntity[]> {
+    return this.chatEntity.find();
+  }
+  
+  // async getPrivateMessages(data: PrivatePeople): Promise<PrivateEntity[]> {
+  //   const sender = data.sender
+  //   const recipient = data.recipient
+  //   console.log('here at service')
+  //   console.log(data.recipient)
+  //   console.log(data.sender)
+
+  //   return this.privateEntity.find();
+  // }
+
+  async getPrivateMessages(sender: string, recipient: string): Promise<PrivateEntity[]> {
+    return this.privateEntity.find({
+      where: [
+        { sender, recipient },
+        { sender: recipient, recipient: sender },
+      ],
+      order: { created_at: 'ASC' },
+    });
+  }
+  
+  
   async createMessage(data: CreateMessage) {
     const messageEntity = new ChatEntity();
     messageEntity.sender = data.sender;
@@ -42,7 +72,16 @@ export class ChatService {
     return messageEntity;
   }
 
-  async getAllMessages(): Promise<ChatEntity[]> {
-    return this.chatEntity.find();
+  async createPrivateMessage(data: CreatePrivateMessage) {
+
+   
+
+    const privateEntity = new PrivateEntity();
+    privateEntity.sender = data.sender;
+    privateEntity.recipient = data.recipient;
+    privateEntity.messageContent  = data.messageContent;
+    
+    await this.privateEntity.save(privateEntity);
+    return privateEntity;
   }
 }
