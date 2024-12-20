@@ -67,13 +67,7 @@ export class MyGateway
    this.server.to(recipientSocketId).emit('private_message', privateMessages);
    client.emit('private_message', privateMessages);
 
-  
-    // if (recipientSocketId) {
-    //   this.server.to(recipientSocketId).emit('private_message', privateMessages);
-    //   console.log(`Message from ${privateMessages.sender} to ${privateMessages.recipient}: ${privateMessages.messageContent}`);
-    // } else {
-    //   console.log(`User ${privateMessages.recipient} is not connected.`);
-    // }
+
   }
 
 

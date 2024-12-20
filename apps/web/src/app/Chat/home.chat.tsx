@@ -16,7 +16,7 @@ export function Home() {
   }, []);
   const getList = async (): Promise<void> => {
     socket.emit('getOnlineUser', myName);
-    socket.emit('register_user', myName); // `fromUser` is the username of the current client
+    socket.emit('register_user', myName);
     socket.on('getOnlineUserfromserver', (newMessage: string[]) => {
       setOnlineUser(newMessage);
     });
@@ -29,22 +29,19 @@ export function Home() {
   function oneChatButton() {
     navigate('/GroupChat', { state: { FromLOgindata } });
   }
+
   return (
-    <>
+    <div>
       <div>
-        <div>
-          <h1>Welcome to main chat {myName} </h1>
-          {finalData.map((data, index) => (
-            <div key={index}>
-              <button onClick={() => userOnline(data)}>
-                {data}: is online
-              </button>
-            </div>
-          ))}
-          <br />
-          <button onClick={oneChatButton}>Group Chat</button>
-        </div>
+        <h1>Welcome to main chat {myName}</h1>
+        {finalData.map((data, index) => (
+          <div key={index}>
+            <button onClick={() => userOnline(data)}>{data}: is online</button>
+          </div>
+        ))}
+        <br />
+        <button onClick={oneChatButton}>Group Chat</button>
       </div>
-    </>
+    </div>
   );
 }
