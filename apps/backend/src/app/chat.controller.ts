@@ -30,9 +30,7 @@ export class ChatController {
   @Query('recipient') recipient: string)
   
   : Promise<PrivateEntity[]> {
-    console.log('here at controller')
-    console.log(sender)
-    console.log(recipient)
+   
     return this.chatService.getPrivateMessages(sender, recipient);
   }
 }

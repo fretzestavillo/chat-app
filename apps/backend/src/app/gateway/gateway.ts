@@ -62,15 +62,20 @@ export class MyGateway
 
   @SubscribeMessage('private_chat')
  async privateMessages(client: Socket, data: CreatePrivateMessage) {
+   const privateMessages = await this.chatService.createPrivateMessage(data);
+   const recipientSocketId = this.userSockets.get(privateMessages.recipient);
+   this.server.to(recipientSocketId).emit('private_message', privateMessages);
+   client.emit('private_message', privateMessages);
 
-    const privateMessages = await this.chatService.createPrivateMessage(data);
-
-    const recipientSocketId = this.userSockets.get(privateMessages.recipient);
-    if (recipientSocketId) {
-      this.server.to(recipientSocketId).emit('private_message', privateMessages);
-      console.log(`Message from ${privateMessages.sender} to ${privateMessages.recipient}: ${privateMessages.messageContent}`);
-    } else {
-      console.log(`User ${privateMessages.recipient} is not connected.`);
-    }
+  
+    // if (recipientSocketId) {
+    //   this.server.to(recipientSocketId).emit('private_message', privateMessages);
+    //   console.log(`Message from ${privateMessages.sender} to ${privateMessages.recipient}: ${privateMessages.messageContent}`);
+    // } else {
+    //   console.log(`User ${privateMessages.recipient} is not connected.`);
+    // }
   }
+
+
+
 }

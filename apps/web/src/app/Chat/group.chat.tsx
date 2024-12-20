@@ -39,7 +39,6 @@ export function GroupChat() {
     !newMessage ? alert('Please put message'): console.log('good boy')
     const data: Inputs = {
       sender: myName,
-
       message: newMessage,
     };
     socket.emit('messageToServer', data);

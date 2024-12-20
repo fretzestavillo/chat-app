@@ -2,6 +2,7 @@ import { useLocation, useNavigate } from 'react-router-dom';
 import { useContext, useEffect, useState } from 'react';
 import { WebsocketContext } from './socket';
 import { PrivateContent } from './tools/type';
+import { get } from 'http';
 
 export function PrivateChat() {
   const navigate = useNavigate();
@@ -53,12 +54,13 @@ useEffect(() => {
       recipient: recipient,
       messageContent: messageContent,
     });
+    
+
+    // socket.on('private_message', (newMessage: PrivateContent) => {
+    //       setPrivateMessage((prev) => [...prev, newMessage]);
+    //     });
+
     setNewMessage('')
-
-    socket.on('private_message', (data) => {
-      setPrivateMessage((prev) => [...prev, data]);
-    });
-
     // socket.off('private_chat')
     // socket.off('private_message')
   }
