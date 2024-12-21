@@ -11,6 +11,9 @@ export class UserEntity {
   @Column()
   lastName: string;
 
+  // @Column()
+  // status: string
+
   @Column({ type: 'timestamp', default: () => 'CURRENT_TIMESTAMP' })
   timestamp: Date;
 }

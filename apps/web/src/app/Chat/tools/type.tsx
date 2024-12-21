@@ -28,3 +28,9 @@ export type PrivateContent = {
     created_at: Date;
   }
   
+
+  export type RegisteredUsers = {
+    firstName: string;
+  
+    lastName: string;
+  }

@@ -33,4 +33,12 @@ export class ChatController {
    
     return this.chatService.getPrivateMessages(sender, recipient);
   }
+
+  @Get('users')
+  getAllUsers(): Promise<UserEntity[]>{
+
+    return this.chatService.getAllUsers();
+
+
+  }
 }

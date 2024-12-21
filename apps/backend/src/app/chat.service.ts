@@ -15,6 +15,7 @@ export class ChatService {
     @InjectRepository(ChatEntity)
     private chatEntity: Repository<ChatEntity>,
 
+
     @InjectRepository(PrivateEntity)
     private privateEntity: Repository<PrivateEntity>
   ) {}
@@ -83,5 +84,10 @@ export class ChatService {
     
     await this.privateEntity.save(privateEntity);
     return privateEntity;
+  }
+
+
+  async getAllUsers(): Promise<UserEntity[]> {
+    return this.userEntity.find();
   }
 }

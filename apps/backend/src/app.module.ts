@@ -9,7 +9,8 @@ import { PrivateEntity } from './app/tools/private.entity';
   imports: [
     TypeOrmModule.forRoot({
       type: 'postgres',
-      host: 'host.docker.internal',  // Updated host for WSL2
+      // host: 'host.docker.internal',  // Updated host for WSL2
+      host: '172.23.16.1',
       port: 5432,
       username: 'file',
       password: 'file',
