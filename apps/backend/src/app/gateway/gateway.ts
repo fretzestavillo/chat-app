@@ -10,7 +10,7 @@ import { Server, Socket } from 'socket.io';
 import { CreatePrivateMessage, Inputs } from '../tools/type';
 import { Inject, Logger } from '@nestjs/common';
 import { ChatService } from '../chat.service';
-import { PrivateEntity } from '../tools/private.entity';
+import { UserEntity } from '../tools/user.entity';
 
 @WebSocketGateway(3002, { cors: { origin: '*' } })
 export class MyGateway
@@ -18,7 +18,7 @@ export class MyGateway
 {
   @Inject()
   private chatService: ChatService;
-  private privateEntity: PrivateEntity
+  private userEntity: UserEntity
   private logger: Logger = new Logger('MyGateway');
   private count = 0;
   private storeUser: string[] = [];
@@ -42,11 +42,18 @@ export class MyGateway
   }
 
   
+
+  
   @SubscribeMessage('getOnlineUser')
-  getOnlineUser(client: Socket, data: any) {
+  async getOnlineUser(client: Socket, data: any) {
     this.storeUser.push(data);
     const finalData = this.storeUser;
     this.server.emit('getOnlineUserfromserver', finalData);
+    const getAllUsers = await this.chatService.getAllUsers();
+    this.server.emit('getAllUsers', getAllUsers);
+
+
+
   }
   
   @SubscribeMessage('register_user')

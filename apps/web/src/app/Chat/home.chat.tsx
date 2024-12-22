@@ -1,6 +1,7 @@
 import { useLocation, useNavigate } from 'react-router-dom';
 import { useContext, useEffect, useState } from 'react';
 import { WebsocketContext } from './socket';
+import { RegisteredUsers } from './tools/type';
 
 export function Home() {
   const navigate = useNavigate();
@@ -10,6 +11,7 @@ export function Home() {
   const [onlineUser, setOnlineUser] = useState<string[]>([]);
   const socket = useContext(WebsocketContext);
   const finalData = Array.from(new Set(onlineUser.map((item: any) => item)));
+  const [registeredUsers, setregisteredUsers] = useState<RegisteredUsers[]>([]);
 
   useEffect(() => {
     getList();
@@ -19,6 +21,10 @@ export function Home() {
     socket.emit('register_user', myName);
     socket.on('getOnlineUserfromserver', (newMessage: string[]) => {
       setOnlineUser(newMessage);
+    });
+
+    socket.on('getAllUsers', (data: RegisteredUsers[]) => {
+      setregisteredUsers(data);
     });
   };
 
@@ -37,6 +43,13 @@ export function Home() {
         {finalData.map((data, index) => (
           <div key={index}>
             <button onClick={() => userOnline(data)}>{data}: is online</button>
+          </div>
+        ))}
+
+        <h1>Users</h1>
+        {registeredUsers.map((user, index)=>(
+          <div>
+          <button key={index} onClick={()=>userOnline(user.firstName)}> {user.firstName}</button>
           </div>
         ))}
         <br />
