@@ -46,9 +46,11 @@ export class MyGateway
   
   @SubscribeMessage('getOnlineUser')
   async getOnlineUser(client: Socket, data: any) {
+    // get all users online 
     this.storeUser.push(data);
     const finalData = this.storeUser;
     this.server.emit('getOnlineUserfromserver', finalData);
+    //get all users
     const getAllUsers = await this.chatService.getAllUsers();
     this.server.emit('getAllUsers', getAllUsers);
 
