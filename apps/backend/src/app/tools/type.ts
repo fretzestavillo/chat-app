@@ -27,3 +27,9 @@ export type PrivatePeople = {
   sender: string,
   recipient: string
 }
+
+export type OnlineUserv2 = {
+  userId: string;
+  socketId: string;
+   name: string;  
+}

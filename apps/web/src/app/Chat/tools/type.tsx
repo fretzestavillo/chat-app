@@ -34,3 +34,10 @@ export type PrivateContent = {
   
     lastName: string;
   }
+
+
+  export type OnlineUserv2 = {
+    userId: string;
+    socketId: string;
+     name: string;  
+  }

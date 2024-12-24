@@ -7,7 +7,7 @@ import {
   WebSocketServer,
 } from '@nestjs/websockets';
 import { Server, Socket } from 'socket.io';
-import { CreatePrivateMessage, Inputs } from '../tools/type';
+import { CreatePrivateMessage, Inputs, OnlineUserv2 } from '../tools/type';
 import { Inject, Logger } from '@nestjs/common';
 import { ChatService } from '../chat.service';
 import { UserEntity } from '../tools/user.entity';
@@ -23,6 +23,7 @@ export class MyGateway
   private count = 0;
   private storeUser: string[] = [];
   private userSockets: Map<string, string> = new Map();
+  private onlineUsers:  OnlineUserv2[] = []
 
   @WebSocketServer()
   private server: Server;
@@ -31,17 +32,17 @@ export class MyGateway
     this.logger.log(` 🚀 MyGateway is running on: http://localhost:3002`);
   }
 
+
   async handleConnection(client: Socket, ...args: any[]): Promise<void> {
     this.count += 1;
     this.logger.log(`Connected: ${this.count} connection}`);
+    
   }
 
   async handleDisconnect(client: Socket) {
     this.count -= 1;
     this.logger.log(`Disconnected: ${this.count} connections`);
   }
-
-  
 
   
   @SubscribeMessage('getOnlineUser')
@@ -54,12 +55,11 @@ export class MyGateway
     const getAllUsers = await this.chatService.getAllUsers();
     this.server.emit('getAllUsers', getAllUsers);
 
-
-
   }
   
   @SubscribeMessage('register_user')
   registerOnlineUser(client: Socket, username: string) {
+
     this.userSockets.set(username, client.id);
     console.log(`User ${username} registered with socket ID ${client.id}`);
   }
@@ -78,7 +78,5 @@ export class MyGateway
 
 
   }
-
-
 
 }

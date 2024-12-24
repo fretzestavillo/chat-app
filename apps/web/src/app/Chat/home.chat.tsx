@@ -1,17 +1,23 @@
 import { useLocation, useNavigate } from 'react-router-dom';
 import { useContext, useEffect, useState } from 'react';
 import { WebsocketContext } from './socket';
-import { RegisteredUsers } from './tools/type';
+import {  RegisteredUsers } from './tools/type';
 
 export function Home() {
   const navigate = useNavigate();
   const location = useLocation();
   const FromLOgindata = location.state;
   const myName = FromLOgindata.result.firstName;
+  const userId = FromLOgindata.result.id;
   const [onlineUser, setOnlineUser] = useState<string[]>([]);
   const socket = useContext(WebsocketContext);
   const finalData = Array.from(new Set(onlineUser.map((item: any) => item)));
   const [registeredUsers, setregisteredUsers] = useState<RegisteredUsers[]>([]);
+
+  console.log(userId)
+  
+  
+
 
   useEffect(() => {
     getList();
@@ -19,6 +25,9 @@ export function Home() {
   const getList = async (): Promise<void> => {
     socket.emit('getOnlineUser', myName);
     socket.emit('register_user', myName);
+   
+
+
     socket.on('getOnlineUserfromserver', (newMessage: string[]) => {
       setOnlineUser(newMessage);
     });
@@ -26,7 +35,8 @@ export function Home() {
     socket.on('getAllUsers', (data: RegisteredUsers[]) => {
       setregisteredUsers(data);
     });
-  };
+
+  }
 
   function userOnline(recipient: any) {
     navigate('/PrivateChat', { state: { FromLOgindata, recipient } });
@@ -39,6 +49,9 @@ export function Home() {
   return (
     <div>
       <div>
+
+
+
         <h1>Welcome to main chat {myName}</h1>
         {finalData.map((data, index) => (
           <div key={index}>
