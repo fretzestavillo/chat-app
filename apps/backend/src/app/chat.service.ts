@@ -1,4 +1,4 @@
-import { Injectable } from '@nestjs/common';
+import { Injectable, UnauthorizedException } from '@nestjs/common';
 import { SignUpInput } from './tools/signup.input';
 import { Repository } from 'typeorm';
 import { InjectRepository } from '@nestjs/typeorm';
@@ -6,6 +6,8 @@ import { UserEntity } from './tools/user.entity';
 import { ChatEntity } from './tools/chat.entity';
 import { CreateMessage, CreatePrivateMessage, PrivatePeople } from './tools/type';
 import { PrivateEntity } from './tools/private.entity';
+import { JwtService } from '@nestjs/jwt';
+
 
 @Injectable()
 export class ChatService {
@@ -14,6 +16,7 @@ export class ChatService {
     private userEntity: Repository<UserEntity>,
     @InjectRepository(ChatEntity)
     private chatEntity: Repository<ChatEntity>,
+    private jwtService: JwtService,
 
 
     @InjectRepository(PrivateEntity)
@@ -25,17 +28,24 @@ export class ChatService {
     chatEntity.firstName = signUpInput.firstName;
     chatEntity.lastName = signUpInput.lastName;
 
-    await this.userEntity.save(chatEntity);
+    await this.userEntity.save(chatEntity); 
     return chatEntity;
   }
 
-  async postDataLogin(signUpInput: SignUpInput): Promise<UserEntity | 'false'> {
+  // async postDataLogin(signUpInput: SignUpInput): Promise<UserEntity | 'false'> {
+  async postDataLogin(signUpInput: SignUpInput): Promise<{ access_token: string, name: string, id: string }>{
     const { firstName, lastName } = signUpInput;
     const found = await this.userEntity.findOne({
       where: { firstName: firstName, lastName: lastName },
     });
 
-    return !found ? 'false' : found;
+    if (found?.firstName !== firstName) {
+      throw new UnauthorizedException();
+    }
+
+    const payload = {sub: found.id, username:  found.firstName}
+
+    return { access_token: await this.jwtService.signAsync(payload), name: payload.username, id: payload.sub }
   }
 
   
@@ -43,16 +53,6 @@ export class ChatService {
     return this.chatEntity.find();
   }
   
-  // async getPrivateMessages(data: PrivatePeople): Promise<PrivateEntity[]> {
-  //   const sender = data.sender
-  //   const recipient = data.recipient
-  //   console.log('here at service')
-  //   console.log(data.recipient)
-  //   console.log(data.sender)
-
-  //   return this.privateEntity.find();
-  // }
-
   async getPrivateMessages(sender: string, recipient: string): Promise<PrivateEntity[]> {
     return this.privateEntity.find({
       where: [

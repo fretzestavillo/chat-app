@@ -28,6 +28,7 @@ export default function Login() {
 
     const result = await response.json();
     const finalResult = String(result);
+    console.log(result.name)
     finalResult === 'false'
       ? alert('fck you should signup')
       : navigate('/Home', { state: { result } });

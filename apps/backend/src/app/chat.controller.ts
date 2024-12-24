@@ -16,7 +16,7 @@ export class ChatController {
   }
 
   @Post('login')
-  postDataLogin(@Body() userInput: SignUpInput): Promise<UserEntity | 'false'> {
+  postDataLogin(@Body() userInput: SignUpInput): Promise<{ access_token: string, name: string, id: string }>{
     return this.chatService.postDataLogin(userInput);
   }
 

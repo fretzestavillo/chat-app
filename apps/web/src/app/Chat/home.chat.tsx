@@ -7,14 +7,17 @@ export function Home() {
   const navigate = useNavigate();
   const location = useLocation();
   const FromLOgindata = location.state;
-  const myName = FromLOgindata.result.firstName;
+  const myName = FromLOgindata.result.name;
   const userId = FromLOgindata.result.id;
+  const token = FromLOgindata.result.access_token;
   const [onlineUser, setOnlineUser] = useState<string[]>([]);
   const socket = useContext(WebsocketContext);
   const finalData = Array.from(new Set(onlineUser.map((item: any) => item)));
   const [registeredUsers, setregisteredUsers] = useState<RegisteredUsers[]>([]);
 
-  console.log(userId)
+  console.log(myName, 'from login')
+  console.log(userId, 'from login')
+  console.log(token, 'from login')
   
   
 
@@ -28,7 +31,7 @@ export function Home() {
    
 
 
-    socket.on('getOnlineUserfromserver', (newMessage: string[]) => {
+    socket.on(' ', (newMessage: string[]) => {
       setOnlineUser(newMessage);
     });
 
