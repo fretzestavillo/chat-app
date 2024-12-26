@@ -8,12 +8,12 @@ export function PrivateChat() {
   const navigate = useNavigate();
   const location = useLocation();
   const FromLOgindata = location.state;
-  const privatesender = FromLOgindata.FromLOgindata.result.firstName;
+  const privatesender = FromLOgindata.FromLOgindata.result.name;
+  const token = FromLOgindata.FromLOgindata.result.access_token;
   const privaterecipient = FromLOgindata.recipient;
   const socket = useContext(WebsocketContext);
   const [newMessage, setNewMessage] = useState('');
   const [privateMessage, setPrivateMessage] = useState<PrivateContent[]>([]);
-  
 
   
 
@@ -25,7 +25,13 @@ useEffect(() => {
     const senderfromhome = privatesender
     const recipientfromhome = privaterecipient
     const BaseUrl = 'http://localhost:3000/api/';
-    const response = await fetch(`${BaseUrl}privatechat?sender=${senderfromhome}&recipient=${recipientfromhome}`);
+    const response = await fetch(`${BaseUrl}privatechat?sender=${senderfromhome}&recipient=${recipientfromhome}`, {
+      method: 'GET',
+      headers: {
+        'Authorization': `Bearer ${token}`, // Include the token
+        'Content-Type': 'application/json', // Optional, but good practice
+      },
+    });    
     const result = await response.json();
     setPrivateMessage(result);
   };

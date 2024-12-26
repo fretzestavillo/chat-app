@@ -7,7 +7,8 @@ export function GroupChat() {
   const navigate = useNavigate();
   const location = useLocation();
   const FromLOgindata = location.state;
-  const myName = FromLOgindata.FromLOgindata.result.firstName;
+  const myName = FromLOgindata.FromLOgindata.result.name;
+  const token = FromLOgindata.FromLOgindata.result.access_token;
   const [messages, setMessages] = useState<MessageList[]>([]);
   const [newMessage, setNewMessage] = useState('');
   const socket = useContext(WebsocketContext);
@@ -17,7 +18,15 @@ export function GroupChat() {
   }, []);
   const getList = async (): Promise<void> => {
     const BaseUrl = 'http://localhost:3000/api/';
-    const response = await fetch(`${BaseUrl}chat`);
+    // const response = await fetch(`${BaseUrl}chat`);
+    const response = await fetch(`${BaseUrl}chat`, {
+      method: 'GET',
+      headers: {
+        'Authorization': `Bearer ${token}`, // Include the token
+        'Content-Type': 'application/json', // Optional, but good practice
+      },
+    });    
+
     const result = await response.json();
     setMessages(result);
     socket.emit('getOnlineUser', myName);
