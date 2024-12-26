@@ -4,9 +4,10 @@ import { Repository } from 'typeorm';
 import { InjectRepository } from '@nestjs/typeorm';
 import { UserEntity } from './tools/user.entity';
 import { ChatEntity } from './tools/chat.entity';
-import { CreateMessage, CreatePrivateMessage, PrivatePeople } from './tools/type';
+import { CreateMessage, CreatePrivateMessage, } from './tools/type';
 import { PrivateEntity } from './tools/private.entity';
 import { JwtService } from '@nestjs/jwt';
+import * as bcrypt from 'bcryptjs'; 
 
 
 @Injectable()
@@ -23,30 +24,47 @@ export class ChatService {
     private privateEntity: Repository<PrivateEntity>
   ) {}
 
+  private async hashPassword(password: string): Promise<string> {
+    const saltRounds = 10; 
+    return bcrypt.hash(password, saltRounds); 
+  }
+
+  private async comparePasswords(enteredPassword: string, storedPassword: string): Promise<boolean> {
+    return bcrypt.compare(enteredPassword, storedPassword); 
+  }
+
   async postDataSignUp(signUpInput: SignUpInput): Promise<UserEntity> {
     const chatEntity = new UserEntity();
     chatEntity.firstName = signUpInput.firstName;
-    chatEntity.lastName = signUpInput.lastName;
+
+    chatEntity.lastName = await this.hashPassword(signUpInput.lastName);
+
 
     await this.userEntity.save(chatEntity); 
     return chatEntity;
   }
 
-  // async postDataLogin(signUpInput: SignUpInput): Promise<UserEntity | 'false'> {
-  async postDataLogin(signUpInput: SignUpInput): Promise<{ access_token: string, name: string, id: string }>{
-    const { firstName, lastName } = signUpInput;
-    const found = await this.userEntity.findOne({
-      where: { firstName: firstName, lastName: lastName },
-    });
+    async postDataLogin(signUpInput: SignUpInput): Promise<{ access_token: string, name: string, id: string }> {
+      const { firstName, lastName } = signUpInput;
+    
+      const found = await this.userEntity.findOne({
+        where: { firstName: firstName },
+      });
+    
+      if (!found) {
+        throw new UnauthorizedException('User not found');
+      }
+    
+      const isPasswordValid = await this.comparePasswords(lastName, found.lastName);
 
-    if (found?.firstName !== firstName) {
-      throw new UnauthorizedException();
+      if (!isPasswordValid) {
+        throw new UnauthorizedException('Invalid credentials');
+      }
+
+      const payload = { sub: found.id, username: found.firstName };
+      return { access_token: await this.jwtService.signAsync(payload), name: payload.username, id: payload.sub };
     }
-
-    const payload = {sub: found.id, username:  found.firstName}
-
-    return { access_token: await this.jwtService.signAsync(payload), name: payload.username, id: payload.sub }
-  }
+    
 
   
   async getAllMessages(): Promise<ChatEntity[]> {
