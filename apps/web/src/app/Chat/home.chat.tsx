@@ -19,6 +19,13 @@ export function Home() {
   console.log(userId, 'from login')
   console.log(token, 'from login')
   
+  window.addEventListener('beforeunload', () => {
+    socket.emit('removeUser', myName);
+    navigator.sendBeacon('/close-tab', JSON.stringify({
+      message: 'User closed the tab or window',
+      timestamp: new Date().toISOString(),
+    }));
+  });
   
 
 
@@ -31,7 +38,7 @@ export function Home() {
    
 
 
-    socket.on(' ', (newMessage: string[]) => {
+    socket.on('getOnlineUserfromserver', (newMessage: string[]) => {
       setOnlineUser(newMessage);
     });
 

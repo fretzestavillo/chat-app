@@ -44,6 +44,15 @@ export class MyGateway
     this.logger.log(`Disconnected: ${this.count} connections`);
   }
 
+
+  @SubscribeMessage('removeUser')
+  async removeUser(client: Socket, data: any) {
+    const finalData = this.storeUser.filter((item)=>{
+      return item !== data
+    })
+    this.server.emit('getOnlineUserfromserver', finalData);
+
+  }
   
   @SubscribeMessage('getOnlineUser')
   async getOnlineUser(client: Socket, data: any) {
