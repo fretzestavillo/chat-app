@@ -27,9 +27,8 @@ export default function Login() {
     });
 
     const result = await response.json();
-    const finalResult = String(result);
-    console.log(result)
-    finalResult === 'false'
+    console.log(result.error)
+    result.error === 'Unauthorized'
       ? alert('fck you should signup')
       : navigate('/Home', { state: { result } });
   };
