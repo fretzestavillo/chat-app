@@ -2,7 +2,6 @@ import { useLocation, useNavigate } from 'react-router-dom';
 import { useContext, useEffect, useState } from 'react';
 import { WebsocketContext } from './socket';
 import { PrivateContent } from './tools/type';
-import { get } from 'http';
 
 export function PrivateChat() {
   const navigate = useNavigate();
