@@ -2,6 +2,9 @@ import { useLocation, useNavigate } from 'react-router-dom';
 import { useContext, useEffect, useState } from 'react';
 import { WebsocketContext } from './socket';
 import { Item, RegisteredUsers } from './tools/type';
+import '../../styles.css'; 
+
+
 
 export function Home() {
   const navigate = useNavigate();
@@ -12,6 +15,7 @@ export function Home() {
   const token = FromLOgindata.result.access_token;
   const socket = useContext(WebsocketContext);
   const [registeredUsers, setregisteredUsers] = useState<RegisteredUsers[]>([]);
+  const isOnline = true
   
   
  
@@ -57,17 +61,18 @@ export function Home() {
     navigate('/GroupChat', { state: { FromLOgindata } });
   }
 
+  function statusCheck(name: string) {
+    const userStatus = uniqueArray.find(data => data.name === name);
+    return userStatus ? "online" : "offline";
+  }
+
   return (
     <div>
       <div>
         <div>
         <h1>Welcome to main chat {myName}</h1>
 
-        {uniqueArray.map((data)=>(
-          <div>
-            <p >{data.socketId}: {data.name}: is online</p>
-          </div>
-        ))}
+       
         </div>
 
 
@@ -75,8 +80,13 @@ export function Home() {
         <h1>Users</h1>
         {registeredUsers.map((user, index) => (
           <div>
-            <button key={index} onClick={() => userOnline(user.firstName)}> {user.firstName}</button>
+            <button key={index} onClick={() => userOnline(user.firstName)}>
+            {/* {user.firstName} <div className="offline"></div> */}
+            {user.firstName} <div className={statusCheck(user.firstName)}></div>
+
+          </button>
           </div>
+          
         ))}
         <br />
         <button onClick={oneChatButton}>Group Chat</button>

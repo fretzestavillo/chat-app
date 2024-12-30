@@ -11,7 +11,8 @@ import { jwtConstants } from './auth/constant';
 
 @Module({
   imports: [TypeOrmModule.forFeature([UserEntity, ChatEntity, PrivateEntity]), GatewayModule,
-   JwtModule.register({global: true, secret: jwtConstants.secret, signOptions: {expiresIn: '200s'}, })],
+  //  JwtModule.register({global: true, secret: jwtConstants.secret, signOptions: {expiresIn: '200s'}, })],
+   JwtModule.register({global: true, secret: jwtConstants.secret, signOptions: {}, })],
   controllers: [ChatController],
   providers: [ChatService],
   exports: [ChatService]
