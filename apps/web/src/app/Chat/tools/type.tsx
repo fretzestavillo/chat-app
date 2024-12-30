@@ -41,3 +41,9 @@ export type PrivateContent = {
     socketId: string;
      name: string;  
   }
+
+
+  export type Item = {
+    socketId: string;
+    name: string
+  }

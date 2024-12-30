@@ -7,7 +7,7 @@ import {
   WebSocketServer,
 } from '@nestjs/websockets';
 import { Server, Socket } from 'socket.io';
-import { CreatePrivateMessage, Inputs,  } from '../tools/type';
+import { CreatePrivateMessage, Inputs, Item,  } from '../tools/type';
 import { Inject, Logger } from '@nestjs/common';
 import { ChatService } from '../chat.service';
 
@@ -20,8 +20,7 @@ export class MyGateway
   private logger: Logger = new Logger('MyGateway');
   private count = 0;
   private userSockets: Map<string, string> = new Map();
-    ////////
-  public onlineUsers: string[] = []
+  public onlineUsers: Item[] = []
   
 
   @WebSocketServer()
@@ -34,8 +33,17 @@ export class MyGateway
 
   async handleConnection(client: Socket, ...args: any[]): Promise<void> {
     this.count += 1;
-    this.logger.log(`Connected: ${this.count} connection}`);
+    this.logger.log(`Connected: ${this.count} connection connect}`);
     
+  }
+
+  async handleDisconnect(client: Socket) {
+    this.count -= 1;
+    this.logger.log(`Connected: ${this.count} connection disconnect`);
+  
+    this.onlineUsers = this.onlineUsers.filter((user: Item) => user.socketId !== client.id);
+    this.server.emit('activeUsers', this.onlineUsers)
+
   }
 
 
@@ -43,33 +51,25 @@ export class MyGateway
    
   @SubscribeMessage('register_user')
   async registerOnlineUser(client: Socket, username: string) {
-    this.onlineUsers.push(username)
+    const data: Item = {
+      socketId: client.id,
+      name: username
+    }
+    this.onlineUsers.push(data)
 
     const getAllUsers = await this.chatService.getAllUsers();
     this.server.emit('getAllUsers', getAllUsers);
     this.userSockets.set(username, client.id );
 
-    /////////////////////
 
     this.server.emit('activeUsers', this.onlineUsers)
    
   }
 
 
-  async handleDisconnect(client: Socket) {
-    this.count -= 1;
-    this.logger.log(`Connected: ${this.count} connection`);
-  
-    
-  }
+
   
 
-
-
-
-
- 
- 
 
 
   @SubscribeMessage('messageToServer')
