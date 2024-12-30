@@ -1,8 +1,8 @@
 import { useLocation, useNavigate } from 'react-router-dom';
 import { useContext, useEffect, useState } from 'react';
 import { WebsocketContext } from './socket';
-import { PrivateContent } from './tools/type';
-
+import { Item, PrivateContent } from './tools/type';
+import '../../styles.css'; 
 export function PrivateChat() {
   const navigate = useNavigate();
   const location = useLocation();
@@ -13,6 +13,11 @@ export function PrivateChat() {
   const socket = useContext(WebsocketContext);
   const [newMessage, setNewMessage] = useState('');
   const [privateMessage, setPrivateMessage] = useState<PrivateContent[]>([]);
+  const [activeUsers, setActiveUsers] = useState<Item[]>([])
+  const uniqueArray = Array.from(
+    new Map(activeUsers.map((user) => [user.name, user])).values()
+  );
+
 
   
 
@@ -33,6 +38,13 @@ useEffect(() => {
     });    
     const result = await response.json();
     setPrivateMessage(result);
+
+
+
+    socket.on('activeUsers', (data: Item[]) => {
+
+      setActiveUsers(data);
+    });
   };
 
   useEffect(() => {
@@ -61,13 +73,14 @@ useEffect(() => {
     });
     
 
-    // socket.on('private_message', (newMessage: PrivateContent) => {
-    //       setPrivateMessage((prev) => [...prev, newMessage]);
-    //     });
-
+  
     setNewMessage('')
-    // socket.off('private_chat')
-    // socket.off('private_message')
+ 
+  }
+
+  function statusCheck(name: string) {
+    const userStatus = uniqueArray.find(data => data.name === name);
+    return userStatus ? "online" : "offline";
   }
 
   return (
@@ -92,7 +105,7 @@ useEffect(() => {
         <div>
           <h1>
             Welcome to private chat {privatesender},wanna start conversation with{' '}
-            {privaterecipient}?
+            {privaterecipient}  <div className={statusCheck(privaterecipient)}></div>?
           </h1>
 
           <br />

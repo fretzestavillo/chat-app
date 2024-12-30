@@ -16,10 +16,6 @@ export function Home() {
   const socket = useContext(WebsocketContext);
   const [registeredUsers, setregisteredUsers] = useState<RegisteredUsers[]>([]);
   
-  
- 
-
-
   const [activeUsers, setActiveUsers] = useState<Item[]>([])
   const uniqueArray = Array.from(
     new Map(activeUsers.map((user) => [user.name, user])).values()
