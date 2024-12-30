@@ -7,7 +7,7 @@ import { Home } from './Chat/home.chat';
 
 export function App() {
   return (
-    <>
+    
       <BrowserRouter>
         <Routes>
           <Route path="/" element={<SignUp />} />
@@ -17,7 +17,7 @@ export function App() {
           <Route path="/GroupChat" element={<GroupChat />} />
         </Routes>
       </BrowserRouter>
-    </>
+
   );
 }
 

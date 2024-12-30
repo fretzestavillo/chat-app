@@ -15,7 +15,6 @@ export function Home() {
   const token = FromLOgindata.result.access_token;
   const socket = useContext(WebsocketContext);
   const [registeredUsers, setregisteredUsers] = useState<RegisteredUsers[]>([]);
-  const isOnline = true
   
   
  
@@ -53,8 +52,9 @@ export function Home() {
 
   }
 
-  function userOnline(recipient: any) {
-    navigate('/PrivateChat', { state: { FromLOgindata, recipient } });
+  function userOnline(recipient: string) {
+     myName === recipient? alert('please dont touch yourself'): navigate('/PrivateChat', { state: { FromLOgindata, recipient } });
+    
   }
 
   function oneChatButton() {
@@ -81,7 +81,6 @@ export function Home() {
         {registeredUsers.map((user, index) => (
           <div>
             <button key={index} onClick={() => userOnline(user.firstName)}>
-            {/* {user.firstName} <div className="offline"></div> */}
             {user.firstName} <div className={statusCheck(user.firstName)}></div>
 
           </button>

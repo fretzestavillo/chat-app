@@ -13,7 +13,7 @@ export default function Login() {
   const {
     register,
     handleSubmit,
-    watch,
+    
     formState: { errors },
   } = useForm<SignUpInput>();
   const onSubmit: SubmitHandler<SignUpInput> = async (data) => {
@@ -27,11 +27,12 @@ export default function Login() {
     });
 
     const result = await response.json();
-    console.log(result.error)
+    // console.log(result.error)
     result.error === 'Unauthorized'
       ? alert('fck you should signup')
       : navigate('/Home', { state: { result } });
   };
+  navigate('/');
 
   return (
     <>

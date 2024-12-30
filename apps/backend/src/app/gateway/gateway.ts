@@ -82,7 +82,7 @@ export class MyGateway
  async privateMessages(client: Socket, data: CreatePrivateMessage) {
    const privateMessages = await this.chatService.createPrivateMessage(data);
    const recipientSocketId = this.userSockets.get(privateMessages.recipient);
-   console.log(recipientSocketId, 'private chat')
+  //  console.log(recipientSocketId, 'private chat')
    this.server.to(recipientSocketId).emit('private_message', privateMessages);
    client.emit('private_message', privateMessages);
 
