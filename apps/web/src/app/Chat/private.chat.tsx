@@ -1,10 +1,9 @@
-import { useLocation, useNavigate } from 'react-router-dom';
+import { useLocation } from 'react-router-dom';
 import { useContext, useEffect, useState } from 'react';
 import { WebsocketContext } from './socket';
 import { Item, PrivateContent } from './tools/type';
 import '../../styles.css'; 
 export function PrivateChat() {
-  const navigate = useNavigate();
   const location = useLocation();
   const FromLOgindata = location.state;
   const privatesender = FromLOgindata.FromLOgindata.result.name;
@@ -32,8 +31,8 @@ useEffect(() => {
     const response = await fetch(`${BaseUrl}privatechat?sender=${senderfromhome}&recipient=${recipientfromhome}`, {
       method: 'GET',
       headers: {
-        'Authorization': `Bearer ${token}`, // Include the token
-        'Content-Type': 'application/json', // Optional, but good practice
+        'Authorization': `Bearer ${token}`,
+        'Content-Type': 'application/json', 
       },
     });    
     const result = await response.json();
