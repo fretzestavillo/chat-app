@@ -12,10 +12,7 @@ export function PrivateChat() {
   const socket = useContext(WebsocketContext);
   const [newMessage, setNewMessage] = useState('');
   const [privateMessage, setPrivateMessage] = useState<PrivateContent[]>([]);
-  const [activeUsers, setActiveUsers] = useState<Item[]>([])
-  const uniqueArray = Array.from(
-    new Map(activeUsers.map((user) => [user.name, user])).values()
-  );
+  
 
 
   
@@ -40,10 +37,7 @@ useEffect(() => {
 
 
 
-    socket.on('activeUsers', (data: Item[]) => {
-
-      setActiveUsers(data);
-    });
+   
   };
 
   useEffect(() => {
@@ -77,10 +71,7 @@ useEffect(() => {
  
   }
 
-  function statusCheck(name: string) {
-    const userStatus = uniqueArray.find(data => data.name === name);
-    return userStatus ? "online" : "offline";
-  }
+ 
 
   return (
     <>
@@ -104,7 +95,7 @@ useEffect(() => {
         <div>
           <h1>
             Welcome to private chat {privatesender},wanna start conversation with{' '}
-            {privaterecipient}  <div className={statusCheck(privaterecipient)}></div>?
+            {privaterecipient}  ?
           </h1>
 
           <br />
